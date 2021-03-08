@@ -1,20 +1,29 @@
 <template>
   <v-app>
-    <v-app-bar app color="teal" dark>
-      <div class="d-flex align-center">
-        <h3>Budgeter</h3>
-      </div>
-    </v-app-bar>
-    <v-main class="mt-5">
-      <MonthlyIncome
-        :monthlyAmount="this.monthlyIncome"
-        @income-submit="updateIncome"
-      />
-      <Expenses
-        :expenses="this.monthlyExpenses"
-        @expenses-submit="addExpense"
-      />
-      <IncomeCard :monthlyNet="this.monthlyNet" />
+    <v-main class="pa-6 pink lighten-4">
+      <v-row justify="center">
+        <v-col :cols="12" :md="8" :lg="4">
+          <MonthlyIncome
+            :monthlyAmount="monthlyIncome"
+            @income-submit="updateIncome"
+          />
+        </v-col>
+        <v-col :cols="12" :md="6" :lg="4">
+          <IncomeCard :monthlyNet="this.monthlyNet" />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col :cols="12" :lg="6">
+          <Expenses
+            :expenses="monthlyExpenses"
+            @expenses-submit="addExpense"
+            @expense-deleted="handleExpenseDeleted"
+          />
+        </v-col>
+        <v-col :cols="12" :lg="6">
+          <PieChart :expenses="monthlyExpenses" :totalAmount="annualExpenses" />
+        </v-col>
+      </v-row>
     </v-main>
   </v-app>
 </template>
@@ -23,12 +32,14 @@
 import MonthlyIncome from "./components/MonthlyIncome";
 import Expenses from "./components/Expenses";
 import IncomeCard from "./components/IncomeCard";
+import PieChart from "./components/PieChart";
 
 export default {
   components: {
     MonthlyIncome,
     Expenses,
     IncomeCard,
+    PieChart,
   },
 
   data() {
@@ -48,6 +59,15 @@ export default {
     updateIncome(newIncome) {
       this.monthlyIncome = newIncome;
     },
+    handleExpenseDeleted(expense) {
+      this.monthlyExpenses = this.monthlyExpenses.filter((e) => {
+        return e !== expense;
+      });
+      localStorage.setItem(
+        "monthlyExpenses",
+        JSON.stringify(this.monthlyExpenses)
+      );
+    },
   },
   computed: {
     totalMonthlyExpenses: function () {
@@ -61,6 +81,9 @@ export default {
       return (
         parseFloat(this.monthlyIncome) - parseFloat(this.totalMonthlyExpenses)
       );
+    },
+    annualExpenses() {
+      return this.totalMonthlyExpenses * 12;
     },
   },
   created() {

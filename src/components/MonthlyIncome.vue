@@ -1,15 +1,20 @@
 <template>
-  <div>
-    <h3 class="teal--text">Add Income</h3>
-    <v-form>
-      <v-text-field
-        outlined
-        label="Monthly Income"
-        v-model="monthlyAmount"
-        v-on:blur="saveIncome"
-      ></v-text-field>
-    </v-form>
-  </div>
+  <v-card>
+    <v-card-title class="primary--text">Monthly Income</v-card-title>
+    <v-card-text>
+      <v-form @submit.prevent="saveIncome">
+        <v-text-field
+          @blur="saveIncome"
+          v-model="monthlyAmount"
+          type="number"
+          outlined
+          color="pink"
+          filled
+          prefix="$"
+        />
+      </v-form>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script>
