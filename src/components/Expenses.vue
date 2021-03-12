@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card height="100%">
     <v-card-title class="primary--text"> Monthly Expenses </v-card-title>
     <v-card-text>
       <v-simple-table :height="200">
